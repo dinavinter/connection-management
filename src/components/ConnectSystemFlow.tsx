@@ -32,8 +32,7 @@ export default function ConnectSystemFlow({ onClose }: ConnectSystemFlowProps) {
   };
 
   const handleCredentialsSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-   
+    e.preventDefault(); 
       setStep(3);
     
   };
