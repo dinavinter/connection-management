@@ -53,6 +53,7 @@ export interface ServerWithOAuth extends Server {
 }
 
 export const serverApi = {
+  supabase,
   async getServers(): Promise<Server[]> {
     const { data, error } = await supabase
       .from('servers')
