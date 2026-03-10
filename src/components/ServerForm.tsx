@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, ChevronRight, AlertCircle } from 'lucide-react';
+import { X, ChevronRight, CircleAlert as AlertCircle } from 'lucide-react';
 import { type Server, serverApi } from '../lib/servers';
 
 interface ServerFormProps {

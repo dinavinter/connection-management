@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Settings, AlertCircle, Loader } from 'lucide-react';
+import { Plus, CreditCard as Edit2, Trash2, Settings, CircleAlert as AlertCircle, Loader } from 'lucide-react';
 import { type Server, type ServerWithOAuth, serverApi } from '../lib/servers';
 import ServerForm from './ServerForm';
 import OAuthSettingsForm from './OAuthSettingsForm';

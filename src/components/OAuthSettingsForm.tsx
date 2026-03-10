@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ChevronRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { X, ChevronRight, CircleAlert as AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { type OAuthSettings, serverApi } from '../lib/servers';
 
 interface OAuthSettingsFormProps {
