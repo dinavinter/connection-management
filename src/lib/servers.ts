@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -11,13 +11,24 @@ export interface Server {
   url: string;
   environment: string;
   description: string;
+  is_identity_provider: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface IdentityProvider {
+  id: string;
+  name: string;
+  authorization_endpoint: string;
+  token_endpoint: string;
+  default_scope: string;
+  created_at: string;
 }
 
 export interface OAuthSettings {
   id: string;
   server_id: string;
+  identity_provider_id?: string;
   client_id: string;
   client_secret: string;
   redirect_uri: string;
@@ -29,8 +40,16 @@ export interface OAuthSettings {
   updated_at: string;
 }
 
+export interface OAuthDestination {
+  id: string;
+  oauth_setting_id: string;
+  destination_server_id: string;
+  created_at: string;
+}
+
 export interface ServerWithOAuth extends Server {
   oauth_settings: OAuthSettings | null;
+  oauth_destinations: OAuthDestination[];
 }
 
 export const serverApi = {
@@ -60,9 +79,15 @@ export const serverApi = {
       .eq('server_id', id)
       .maybeSingle();
 
+    const { data: destData } = await supabase
+      .from('oauth_destinations')
+      .select('*')
+      .eq('oauth_setting_id', oauthData?.id || '');
+
     return {
       ...data,
       oauth_settings: oauthData,
+      oauth_destinations: destData || [],
     };
   },
 
@@ -137,6 +162,46 @@ export const serverApi = {
       .from('oauth_settings')
       .delete()
       .eq('id', id);
+
+    if (error) throw error;
+  },
+
+  async getIdentityProviders(): Promise<IdentityProvider[]> {
+    const { data, error } = await supabase
+      .from('identity_providers')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getOAuthDestinations(oauthSettingId: string): Promise<OAuthDestination[]> {
+    const { data, error } = await supabase
+      .from('oauth_destinations')
+      .select('*')
+      .eq('oauth_setting_id', oauthSettingId);
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  async addOAuthDestination(oauthSettingId: string, destinationServerId: string): Promise<OAuthDestination> {
+    const { data, error } = await supabase
+      .from('oauth_destinations')
+      .insert([{ oauth_setting_id: oauthSettingId, destination_server_id: destinationServerId }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async removeOAuthDestination(destinationId: string): Promise<void> {
+    const { error } = await supabase
+      .from('oauth_destinations')
+      .delete()
+      .eq('id', destinationId);
 
     if (error) throw error;
   },

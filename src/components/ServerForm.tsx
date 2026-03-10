@@ -40,6 +40,7 @@ export default function ServerForm({ server, onSuccess, onCancel }: ServerFormPr
           url,
           environment,
           description,
+          is_identity_provider: false,
         });
       }
 

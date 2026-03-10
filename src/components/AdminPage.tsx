@@ -25,7 +25,7 @@ export default function AdminPage() {
       const serversWithOAuth = await Promise.all(
         serverList.map(async (server) => {
           const fullServer = await serverApi.getServer(server.id);
-          return fullServer || { ...server, oauth_settings: null };
+          return fullServer || { ...server, oauth_settings: null, oauth_destinations: [] };
         })
       );
       setServers(serversWithOAuth);
